@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscar Endereço por CEP</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px;
+            width: 100%;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Buscar Endereço por CEP</h1>
+    <form id="cepForm">
+        <label for="cep">CEP:</label>
+        <input type="text" id="cep" name="cep" placeholder="Digite o CEP" required>
+
+        <label for="logradouro">Logradouro:</label>
+        <input type="text" id="logradouro" name="logradouro" readonly>
+
+        <label for="bairro">Bairro:</label>
+        <input type="text" id="bairro" name="bairro" readonly>
+
+        <label for="cidade">Cidade:</label>
+        <input type="text" id="cidade" name="cidade" readonly>
+
+        <label for="estado">Estado:</label>
+        <input type="text" id="estado" name="estado" readonly>
+
+        <button type="submit">Buscar Endereço</button>
+    </form>
+
+    <script>
+        document.getElementById('cepForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const cep = document.getElementById('cep').value.replace(/\D/g, '');
+            if (cep) {
+                fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.erro) {
+                            alert('CEP não encontrado.');
+                        } else {
+                            document.getElementById('logradouro').value = data.logradouro;
+                            document.getElementById('bairro').value = data.bairro;
+                            document.getElementById('cidade').value = data.localidade;
+                            document.getElementById('estado').value = data.uf;
+                        }
+                    })
+                    .catch(error => {
+                        alert('Erro ao buscar o CEP. Tente novamente mais tarde.');
+                    });
+            } else {
+                alert('Por favor, insira um CEP válido.');
+            }
+        });
+    </script>
+</body>
+</html>
